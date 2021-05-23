@@ -1,12 +1,14 @@
 package com.mjava.foodbox.controller;
 
-import java.lang.module.ResolutionException;
+ 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.relation.RoleNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+ 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +24,7 @@ import com.mjava.foodbox.model.Categeory;
 import com.mjava.foodbox.model.Fooditem;
 import com.mjava.foodbox.model.Order;
 import com.mjava.foodbox.model.Register;
-import com.mjava.foodbox.model.User;
+ 
 import com.mjava.foodbox.repository.CategeoryRepository;
 import com.mjava.foodbox.repository.FoodItemRepository;
 import com.mjava.foodbox.service.CategeoryService;
@@ -30,7 +32,7 @@ import com.mjava.foodbox.service.FooditemService;
 import com.mjava.foodbox.service.OrderService;
 import com.mjava.foodbox.service.RegisterService;
 import com.mjava.foodbox.service.UserService;
-
+ 
 @RestController
 @RequestMapping("/api/v1/")
 @CrossOrigin
@@ -131,10 +133,10 @@ public class CommonController {
 	public CategeoryRepository categeoryRepo;
 	
 	@PutMapping("/updatecategeory/{catid}")
-	public ResponseEntity<Categeory> updateCategeoryWithCatId(@PathVariable int catid,@RequestBody Categeory categeoryDetails)
+	public ResponseEntity<Categeory> updateCategeoryWithCatId(@PathVariable int catid,@RequestBody Categeory categeoryDetails) throws RoleNotFoundException
 	{
 		Categeory categeory=categeoryRepo.findById(catid)
-				.orElseThrow(()->new  ResolutionException());	
+				 .orElseThrow(()->new RoleNotFoundException("Item Not Found with Cat Id : "+catid));	
 		categeory.setCatid(categeoryDetails.getCatid());
 		categeory.setCatName(categeoryDetails.getCatName());
 		categeory.setCatimglink(categeoryDetails.getCatimglink());
@@ -148,10 +150,10 @@ public class CommonController {
 	@Autowired
 	public FoodItemRepository fooditemRepo;
 	@PutMapping("/updatefooditem/{fid}")
-	public ResponseEntity<Fooditem> updateFooditemWithfId(@PathVariable int fid,@RequestBody Fooditem fooditemDetails)
+	public ResponseEntity<Fooditem> updateFooditemWithfId(@PathVariable int fid,@RequestBody Fooditem fooditemDetails) throws RoleNotFoundException
 	{
 		Fooditem fooditem=fooditemRepo.findById(fid)
-				.orElseThrow(()->new  ResolutionException());	
+				 .orElseThrow(()->new RoleNotFoundException("Item Not Found with Food Id : "+fid));
 		fooditem.setFid(fooditemDetails.getFid());
 		fooditem.setFcatid(fooditemDetails.getFcatid());
 		fooditem.setFname(fooditemDetails.getFname());
@@ -165,11 +167,12 @@ public class CommonController {
 	
 	//Delete FoodItem
 	@DeleteMapping("/deletefooditem/{fid}")
-	public ResponseEntity<Map<String,Boolean>> deleteFoodIyem(@PathVariable int fid)
+	public ResponseEntity<Map<String,Boolean>> deleteFoodIyem(@PathVariable int fid) throws RoleNotFoundException
 	{
 		
 		Fooditem fooditem=fooditemRepo.findById(fid)
-				.orElseThrow(()->new  ResolutionException());
+				 .orElseThrow(()->new RoleNotFoundException("Item Not Found with Food Id : "+fid));
+				//.orElseThrow(()->new  ResolutionException("Item Not Found with Food Id : "+fid));
 		fooditemRepo.delete(fooditem);
 		
 		Map<String,Boolean> response=new HashMap<>(); 
